@@ -184,15 +184,15 @@ impl Default for TypeStats {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SizeDistribution {
     /// Files smaller than 1 KB
-    pub tiny: u64,      // < 1 KB
+    pub tiny: u64, // < 1 KB
     /// Files between 1 KB and 1 MB
-    pub small: u64,     // 1 KB - 1 MB
+    pub small: u64, // 1 KB - 1 MB
     /// Files between 1 MB and 100 MB
-    pub medium: u64,    // 1 MB - 100 MB
+    pub medium: u64, // 1 MB - 100 MB
     /// Files between 100 MB and 1 GB
-    pub large: u64,     // 100 MB - 1 GB
+    pub large: u64, // 100 MB - 1 GB
     /// Files larger than 1 GB
-    pub huge: u64,      // > 1 GB
+    pub huge: u64, // > 1 GB
 }
 
 impl SizeDistribution {
@@ -226,9 +226,10 @@ impl Default for SizeDistribution {
 }
 
 /// Output format options for displaying statistics.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum OutputFormat {
     /// Human-readable table format
+    #[default]
     Table,
     /// JSON format for programmatic use
     Json,
@@ -238,16 +239,11 @@ pub enum OutputFormat {
     Summary,
 }
 
-impl Default for OutputFormat {
-    fn default() -> Self {
-        OutputFormat::Table
-    }
-}
-
 /// Sorting options for file listings.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum SortBy {
     /// Sort by file name
+    #[default]
     Name,
     /// Sort by file size
     Size,
@@ -255,12 +251,6 @@ pub enum SortBy {
     Modified,
     /// Sort by file type/extension
     Type,
-}
-
-impl Default for SortBy {
-    fn default() -> Self {
-        SortBy::Name
-    }
 }
 
 /// Configuration options for the rfstat tool.

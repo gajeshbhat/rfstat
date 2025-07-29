@@ -88,7 +88,7 @@ mod tests {
     fn test_error_creation() {
         let path = Path::new("/nonexistent");
         let error = RfstatError::path_not_found(path);
-        
+
         match error {
             RfstatError::PathNotFound { path: p } => {
                 assert_eq!(p, Path::new("/nonexistent"));

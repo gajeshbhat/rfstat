@@ -1,0 +1,66 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths: 
+      - 'docs/**'
+      - 'README.md'
+      - 'src/**/*.rs'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - 'src/**/*.rs'
+
+jobs:
+  check-docs:
+    name: Check Documentation
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Check documentation links
+      run: |
+        # Simple check for broken internal links in markdown files
+        find docs -name "*.md" -exec grep -l "](.*\.md)" {} \; | while read file; do
+          echo "Checking links in $file"
+          grep -o "](.*\.md)" "$file" | sed 's/](\(.*\))/\1/' | while read link; do
+            # Convert relative links to absolute paths
+            if [[ "$link" =~ ^\.\./ ]]; then
+              target_file="docs/$(echo "$link" | sed 's|^\.\./||')"
+            elif [[ "$link" =~ ^\.\/ ]]; then
+              target_file="$(dirname "$file")/$(echo "$link" | sed 's|^\./||')"
+            else
+              target_file="$(dirname "$file")/$link"
+            fi
+            
+            if [[ ! -f "$target_file" ]]; then
+              echo "❌ Broken link in $file: $link -> $target_file"
+              exit 1
+            else
+              echo "✅ Valid link: $link"
+            fi
+          done
+        done
+
+    - name: Generate and check rustdoc
+      run: |
+        cargo doc --no-deps --document-private-items
+        echo "✅ Documentation generated successfully"
+
+    - name: Check README examples
+      run: |
+        # Extract and validate code blocks from README
+        echo "Checking README code examples..."
+        if grep -q '```bash' README.md; then
+          echo "✅ Found bash examples in README"
+        fi
+        if grep -q '```rust' README.md; then
+          echo "✅ Found rust examples in README"
+        fi

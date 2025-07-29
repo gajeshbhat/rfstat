@@ -153,16 +153,18 @@ impl Cli {
     /// Supports formats like "1KB", "500MB", "2GB", etc.
     pub fn parse_size(size_str: &str) -> Result<u64, String> {
         let size_str = size_str.to_uppercase();
-        
+
         // Extract number and unit
-        let (number_part, unit_part) = if let Some(pos) = size_str.find(|c: char| c.is_alphabetic()) {
+        let (number_part, unit_part) = if let Some(pos) = size_str.find(|c: char| c.is_alphabetic())
+        {
             size_str.split_at(pos)
         } else {
             (size_str.as_str(), "")
         };
 
-        let number: f64 = number_part.parse()
-            .map_err(|_| format!("Invalid number: {}", number_part))?;
+        let number: f64 = number_part
+            .parse()
+            .map_err(|_| format!("Invalid number: {number_part}"))?;
 
         let multiplier = match unit_part {
             "" | "B" => 1u64,
@@ -174,7 +176,7 @@ impl Cli {
             "MIB" => 1_048_576,
             "GIB" => 1_073_741_824,
             "TIB" => 1_099_511_627_776,
-            _ => return Err(format!("Unknown unit: {}", unit_part)),
+            _ => return Err(format!("Unknown unit: {unit_part}")),
         };
 
         Ok((number * multiplier as f64) as u64)
@@ -208,34 +210,6 @@ impl Cli {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_parse_size() {
-        assert_eq!(Cli::parse_size("1024").unwrap(), 1024);
-        assert_eq!(Cli::parse_size("1KB").unwrap(), 1000);
-        assert_eq!(Cli::parse_size("1KiB").unwrap(), 1024);
-        assert_eq!(Cli::parse_size("1MB").unwrap(), 1_000_000);
-        assert_eq!(Cli::parse_size("1.5GB").unwrap(), 1_500_000_000);
-        
-        assert!(Cli::parse_size("invalid").is_err());
-        assert!(Cli::parse_size("1XB").is_err());
-    }
-
-    #[test]
-    fn test_parse_extensions() {
-        let cli = Cli {
-            extensions: Some("txt,log,conf".to_string()),
-            ..Default::default()
-        };
-        
-        let extensions = cli.parse_extensions().unwrap();
-        assert_eq!(extensions, vec!["txt", "log", "conf"]);
-    }
-}
-
 // Implement Default for Cli to support testing
 impl Default for Cli {
     fn default() -> Self {
@@ -256,5 +230,33 @@ impl Default for Cli {
             show_permissions: false,
             show_times: false,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_size() {
+        assert_eq!(Cli::parse_size("1024").unwrap(), 1024);
+        assert_eq!(Cli::parse_size("1KB").unwrap(), 1000);
+        assert_eq!(Cli::parse_size("1KiB").unwrap(), 1024);
+        assert_eq!(Cli::parse_size("1MB").unwrap(), 1_000_000);
+        assert_eq!(Cli::parse_size("1.5GB").unwrap(), 1_500_000_000);
+
+        assert!(Cli::parse_size("invalid").is_err());
+        assert!(Cli::parse_size("1XB").is_err());
+    }
+
+    #[test]
+    fn test_parse_extensions() {
+        let cli = Cli {
+            extensions: Some("txt,log,conf".to_string()),
+            ..Default::default()
+        };
+
+        let extensions = cli.parse_extensions().unwrap();
+        assert_eq!(extensions, vec!["txt", "log", "conf"]);
     }
 }

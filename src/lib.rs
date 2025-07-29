@@ -51,19 +51,19 @@
 //! # }
 //! ```
 
-pub mod types;
-pub mod scanner;
-pub mod stats;
-pub mod formatter;
 pub mod cli;
 pub mod error;
+pub mod formatter;
+pub mod scanner;
+pub mod stats;
+pub mod types;
 
-pub use types::*;
-pub use scanner::*;
-pub use stats::*;
+pub use cli::*;
 pub use error::*;
 pub use formatter::*;
-pub use cli::*;
+pub use scanner::*;
+pub use stats::*;
+pub use types::*;
 
 /// Version information for the rfstat tool
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

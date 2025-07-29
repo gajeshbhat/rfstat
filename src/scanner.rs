@@ -37,7 +37,7 @@ use walkdir::{DirEntry, WalkDir};
 /// ```
 pub fn scan_directory<P: AsRef<Path>>(path: P, config: &Config) -> Result<Vec<FileEntry>> {
     let path = path.as_ref();
-    
+
     if !path.exists() {
         return Err(RfstatError::path_not_found(path));
     }
@@ -68,7 +68,7 @@ pub fn scan_directory<P: AsRef<Path>>(path: P, config: &Config) -> Result<Vec<Fi
                 }
             }
             Err(e) => {
-                warn!("Error walking directory: {}", e);
+                warn!("Error walking directory: {e}");
                 // Continue processing instead of failing
             }
         }
@@ -96,7 +96,7 @@ fn create_walker(path: &Path, config: &Config) -> walkdir::IntoIter {
 /// Processes a single directory entry and converts it to a FileEntry if it passes filters.
 fn process_dir_entry(dir_entry: &DirEntry, config: &Config) -> Result<Option<FileEntry>> {
     let path = dir_entry.path();
-    
+
     // Skip hidden files unless explicitly requested
     if !config.show_hidden && is_hidden(path) {
         return Ok(None);
@@ -114,16 +114,14 @@ fn process_dir_entry(dir_entry: &DirEntry, config: &Config) -> Result<Option<Fil
 fn create_file_entry<P: AsRef<Path>>(path: P) -> Result<FileEntry> {
     let path = path.as_ref();
     let metadata = fs::metadata(path)?;
-    
+
     let size = if metadata.is_file() {
         metadata.len()
     } else {
         0 // Directories have size 0 for our purposes
     };
 
-    let modified = metadata
-        .modified()?
-        .into();
+    let modified = metadata.modified()?.into();
 
     let permissions = metadata.permissions().mode();
 
@@ -234,13 +232,11 @@ pub fn sort_entries(entries: &mut [FileEntry], sort_by: crate::types::SortBy) {
             entries.sort_by(|a, b| b.modified.cmp(&a.modified)); // Newest first
         }
         SortBy::Type => {
-            entries.sort_by(|a, b| {
-                match (&a.file_type, &b.file_type) {
-                    (Some(a_type), Some(b_type)) => a_type.cmp(b_type),
-                    (Some(_), None) => std::cmp::Ordering::Less,
-                    (None, Some(_)) => std::cmp::Ordering::Greater,
-                    (None, None) => a.path.cmp(&b.path),
-                }
+            entries.sort_by(|a, b| match (&a.file_type, &b.file_type) {
+                (Some(a_type), Some(b_type)) => a_type.cmp(b_type),
+                (Some(_), None) => std::cmp::Ordering::Less,
+                (None, Some(_)) => std::cmp::Ordering::Greater,
+                (None, None) => a.path.cmp(&b.path),
             });
         }
     }
@@ -258,10 +254,10 @@ mod tests {
     fn test_scan_empty_directory() -> Result<()> {
         let temp_dir = TempDir::new().unwrap();
         let config = Config::default();
-        
+
         let entries = scan_directory(temp_dir.path(), &config)?;
         assert_eq!(entries.len(), 0);
-        
+
         Ok(())
     }
 
@@ -269,14 +265,14 @@ mod tests {
     fn test_scan_directory_with_files() -> Result<()> {
         let temp_dir = TempDir::new().unwrap();
         let config = Config::default();
-        
+
         // Create test files
         File::create(temp_dir.path().join("test1.txt")).unwrap();
         File::create(temp_dir.path().join("test2.log")).unwrap();
-        
+
         let entries = scan_directory(temp_dir.path(), &config)?;
         assert_eq!(entries.len(), 2);
-        
+
         Ok(())
     }
 

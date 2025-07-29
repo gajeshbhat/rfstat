@@ -85,17 +85,17 @@ fn format_table<W: Write>(
 ) -> Result<()> {
     // Print summary statistics first
     write_summary_header(writer, stats, options)?;
-    
+
     if !options.summary_only && !stats.entries.is_empty() {
         writeln!(writer)?;
         write_file_table(writer, stats, options)?;
     }
-    
+
     if options.show_file_types && !stats.file_types.is_empty() {
         writeln!(writer)?;
         write_file_types_table(writer, stats, options)?;
     }
-    
+
     Ok(())
 }
 
@@ -110,32 +110,72 @@ fn write_summary_header<W: Write>(
     } else {
         "File Statistics Summary".normal()
     };
-    
-    writeln!(writer, "{}", title)?;
+
+    writeln!(writer, "{title}")?;
     writeln!(writer, "{}", "=".repeat(50))?;
-    
-    writeln!(writer, "Total Files:      {}", format_number(stats.total_files))?;
-    writeln!(writer, "Total Directories: {}", format_number(stats.total_dirs))?;
+
+    writeln!(
+        writer,
+        "Total Files:      {}",
+        format_number(stats.total_files)
+    )?;
+    writeln!(
+        writer,
+        "Total Directories: {}",
+        format_number(stats.total_dirs)
+    )?;
     writeln!(writer, "Total Size:       {}", stats.total_size_human())?;
-    
+
     if stats.total_files > 0 {
         writeln!(writer, "Average File Size: {}", stats.avg_file_size_human())?;
-        writeln!(writer, "Largest File:     {}", humansize::format_size(stats.max_file_size, humansize::DECIMAL))?;
-        writeln!(writer, "Smallest File:    {}", humansize::format_size(
-            if stats.min_file_size == u64::MAX { 0 } else { stats.min_file_size },
-            humansize::DECIMAL
-        ))?;
+        writeln!(
+            writer,
+            "Largest File:     {}",
+            humansize::format_size(stats.max_file_size, humansize::DECIMAL)
+        )?;
+        writeln!(
+            writer,
+            "Smallest File:    {}",
+            humansize::format_size(
+                if stats.min_file_size == u64::MAX {
+                    0
+                } else {
+                    stats.min_file_size
+                },
+                humansize::DECIMAL
+            )
+        )?;
     }
-    
+
     // Size distribution
     writeln!(writer)?;
     writeln!(writer, "Size Distribution:")?;
-    writeln!(writer, "  Tiny (< 1KB):     {}", format_number(stats.size_distribution.tiny))?;
-    writeln!(writer, "  Small (1KB-1MB):  {}", format_number(stats.size_distribution.small))?;
-    writeln!(writer, "  Medium (1MB-100MB): {}", format_number(stats.size_distribution.medium))?;
-    writeln!(writer, "  Large (100MB-1GB): {}", format_number(stats.size_distribution.large))?;
-    writeln!(writer, "  Huge (> 1GB):     {}", format_number(stats.size_distribution.huge))?;
-    
+    writeln!(
+        writer,
+        "  Tiny (< 1KB):     {}",
+        format_number(stats.size_distribution.tiny)
+    )?;
+    writeln!(
+        writer,
+        "  Small (1KB-1MB):  {}",
+        format_number(stats.size_distribution.small)
+    )?;
+    writeln!(
+        writer,
+        "  Medium (1MB-100MB): {}",
+        format_number(stats.size_distribution.medium)
+    )?;
+    writeln!(
+        writer,
+        "  Large (100MB-1GB): {}",
+        format_number(stats.size_distribution.large)
+    )?;
+    writeln!(
+        writer,
+        "  Huge (> 1GB):     {}",
+        format_number(stats.size_distribution.huge)
+    )?;
+
     Ok(())
 }
 
@@ -150,16 +190,16 @@ fn write_file_table<W: Write>(
     } else {
         "File Details".normal()
     };
-    
-    writeln!(writer, "{}", title)?;
+
+    writeln!(writer, "{title}")?;
     writeln!(writer, "{}", "-".repeat(30))?;
-    
+
     let entries = if let Some(limit) = options.limit {
         &stats.entries[..stats.entries.len().min(limit)]
     } else {
         &stats.entries
     };
-    
+
     // Create table data
     let mut table_data = Vec::new();
     for entry in entries {
@@ -182,27 +222,29 @@ fn write_file_table<W: Write>(
                 "".to_string()
             },
         };
-        
+
         // Apply colors if enabled
         if options.use_colors {
             if entry.is_dir {
                 row.name = row.name.blue().to_string();
                 row.type_field = row.type_field.blue().to_string();
-            } else if entry.size > 100_000_000 { // > 100MB
+            } else if entry.size > 100_000_000 {
+                // > 100MB
                 row.size = row.size.red().to_string();
-            } else if entry.size > 1_000_000 { // > 1MB
+            } else if entry.size > 1_000_000 {
+                // > 1MB
                 row.size = row.size.yellow().to_string();
             }
         }
-        
+
         table_data.push(row);
     }
-    
+
     if !table_data.is_empty() {
         let table = Table::new(table_data).to_string();
-        writeln!(writer, "{}", table)?;
+        writeln!(writer, "{table}")?;
     }
-    
+
     Ok(())
 }
 
@@ -217,13 +259,13 @@ fn write_file_types_table<W: Write>(
     } else {
         "File Types".normal()
     };
-    
-    writeln!(writer, "{}", title)?;
+
+    writeln!(writer, "{title}")?;
     writeln!(writer, "{}", "-".repeat(20))?;
-    
+
     let mut type_data: Vec<_> = stats.file_types.iter().collect();
     type_data.sort_by(|a, b| b.1.count.cmp(&a.1.count));
-    
+
     let type_rows: Vec<FileTypeRow> = type_data
         .into_iter()
         .map(|(ext, type_stats)| FileTypeRow {
@@ -233,12 +275,12 @@ fn write_file_types_table<W: Write>(
             avg_size: humansize::format_size(type_stats.avg_size, humansize::DECIMAL),
         })
         .collect();
-    
+
     if !type_rows.is_empty() {
         let table = Table::new(type_rows).to_string();
-        writeln!(writer, "{}", table)?;
+        writeln!(writer, "{table}")?;
     }
-    
+
     Ok(())
 }
 
@@ -249,7 +291,7 @@ fn format_json<W: Write>(
     _options: &FormatterOptions,
 ) -> Result<()> {
     let json = serde_json::to_string_pretty(stats)?;
-    writeln!(writer, "{}", json)?;
+    writeln!(writer, "{json}")?;
     Ok(())
 }
 
@@ -260,9 +302,15 @@ fn format_csv<W: Write>(
     options: &FormatterOptions,
 ) -> Result<()> {
     let mut csv_writer = csv::Writer::from_writer(writer);
-    
+
     // Write header
-    let mut headers = vec!["path", "size_bytes", "size_human", "is_directory", "file_type"];
+    let mut headers = vec![
+        "path",
+        "size_bytes",
+        "size_human",
+        "is_directory",
+        "file_type",
+    ];
     if options.show_permissions {
         headers.push("permissions");
     }
@@ -270,14 +318,14 @@ fn format_csv<W: Write>(
         headers.push("modified");
     }
     csv_writer.write_record(&headers)?;
-    
+
     // Write data rows
     let entries = if let Some(limit) = options.limit {
         &stats.entries[..stats.entries.len().min(limit)]
     } else {
         &stats.entries
     };
-    
+
     for entry in entries {
         let mut record = vec![
             entry.path.to_string_lossy().to_string(),
@@ -286,17 +334,17 @@ fn format_csv<W: Write>(
             entry.is_dir.to_string(),
             entry.file_type.as_deref().unwrap_or("").to_string(),
         ];
-        
+
         if options.show_permissions {
             record.push(format!("{:o}", entry.permissions));
         }
         if options.show_times {
             record.push(entry.modified.format("%Y-%m-%d %H:%M:%S").to_string());
         }
-        
+
         csv_writer.write_record(&record)?;
     }
-    
+
     csv_writer.flush()?;
     Ok(())
 }
@@ -307,7 +355,9 @@ fn format_summary<W: Write>(
     writer: &mut W,
     _options: &FormatterOptions,
 ) -> Result<()> {
-    writeln!(writer, "Files: {} | Dirs: {} | Size: {} | Avg: {}",
+    writeln!(
+        writer,
+        "Files: {} | Dirs: {} | Size: {} | Avg: {}",
         format_number(stats.total_files),
         format_number(stats.total_dirs),
         stats.total_size_human(),
@@ -321,14 +371,14 @@ fn format_number(n: u64) -> String {
     let s = n.to_string();
     let mut result = String::new();
     let chars: Vec<char> = s.chars().collect();
-    
+
     for (i, &ch) in chars.iter().enumerate() {
         if i > 0 && (chars.len() - i) % 3 == 0 {
             result.push(',');
         }
         result.push(ch);
     }
-    
+
     result
 }
 
@@ -377,9 +427,9 @@ mod tests {
         let stats = FileStats::new();
         let mut output = Vec::new();
         let options = FormatterOptions::default();
-        
+
         format_json(&stats, &mut output, &options).unwrap();
-        
+
         let json_str = String::from_utf8(output).unwrap();
         assert!(json_str.contains("total_files"));
         assert!(json_str.contains("total_size"));
@@ -390,9 +440,9 @@ mod tests {
         let stats = FileStats::new();
         let mut output = Vec::new();
         let options = FormatterOptions::default();
-        
+
         format_summary(&stats, &mut output, &options).unwrap();
-        
+
         let summary_str = String::from_utf8(output).unwrap();
         assert!(summary_str.contains("Files:"));
         assert!(summary_str.contains("Dirs:"));

@@ -39,7 +39,7 @@ fn create_test_directory() -> TempDir {
 #[test]
 fn test_basic_directory_analysis() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--quiet")
@@ -53,7 +53,7 @@ fn test_basic_directory_analysis() {
 #[test]
 fn test_json_output_format() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--format")
@@ -69,7 +69,7 @@ fn test_json_output_format() {
 #[test]
 fn test_csv_output_format() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--format")
@@ -85,7 +85,7 @@ fn test_csv_output_format() {
 #[test]
 fn test_summary_output_format() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--format")
@@ -101,7 +101,7 @@ fn test_summary_output_format() {
 #[test]
 fn test_extension_filtering() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--extensions")
@@ -119,7 +119,7 @@ fn test_extension_filtering() {
 #[test]
 fn test_size_filtering() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--min-size")
@@ -136,7 +136,7 @@ fn test_size_filtering() {
 #[test]
 fn test_sorting_by_size() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--sort")
@@ -146,12 +146,12 @@ fn test_sorting_by_size() {
         .arg("--quiet")
         .assert()
         .success();
-    
+
     // The largest file should appear first in size-sorted output
     let output = cmd.output().unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
     let lines: Vec<&str> = stdout.lines().collect();
-    
+
     // Skip header line and check that files are sorted by size (largest first)
     if lines.len() > 2 {
         // This is a basic check - in a real test you'd parse the CSV properly
@@ -162,7 +162,7 @@ fn test_sorting_by_size() {
 #[test]
 fn test_hidden_files_inclusion() {
     let temp_dir = create_test_directory();
-    
+
     // Test without --all flag (should not include hidden files)
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
@@ -172,7 +172,7 @@ fn test_hidden_files_inclusion() {
         .assert()
         .success()
         .stdout(predicate::str::contains(".hidden").not());
-    
+
     // Test with --all flag (should include hidden files)
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
@@ -188,7 +188,7 @@ fn test_hidden_files_inclusion() {
 #[test]
 fn test_recursive_vs_non_recursive() {
     let temp_dir = create_test_directory();
-    
+
     // Test recursive (default)
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
@@ -198,7 +198,7 @@ fn test_recursive_vs_non_recursive() {
         .assert()
         .success()
         .stdout(predicate::str::contains("nested.conf"));
-    
+
     // Test non-recursive
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
@@ -214,7 +214,7 @@ fn test_recursive_vs_non_recursive() {
 #[test]
 fn test_depth_limiting() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--depth")
@@ -230,7 +230,7 @@ fn test_depth_limiting() {
 #[test]
 fn test_limit_option() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--limit")
@@ -240,11 +240,11 @@ fn test_limit_option() {
         .arg("--quiet")
         .assert()
         .success();
-    
+
     let output = cmd.output().unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
     let lines: Vec<&str> = stdout.lines().collect();
-    
+
     // Should have header + 2 data lines (or fewer if there are fewer files)
     assert!(lines.len() <= 3);
 }
@@ -261,7 +261,7 @@ fn test_nonexistent_path() {
 #[test]
 fn test_invalid_size_format() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--min-size")
@@ -294,7 +294,7 @@ fn test_version_output() {
 #[test]
 fn test_verbose_logging() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--verbose")
@@ -302,7 +302,7 @@ fn test_verbose_logging() {
         .arg("summary")
         .assert()
         .success();
-    
+
     // In verbose mode, we should see some debug output
     // Note: This test might be flaky depending on logging configuration
 }
@@ -310,7 +310,7 @@ fn test_verbose_logging() {
 #[test]
 fn test_permissions_and_times() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--show-permissions")
@@ -327,7 +327,7 @@ fn test_permissions_and_times() {
 #[test]
 fn test_summary_only_flag() {
     let temp_dir = create_test_directory();
-    
+
     let mut cmd = Command::cargo_bin("rfstat").unwrap();
     cmd.arg(temp_dir.path())
         .arg("--summary-only")
@@ -336,7 +336,7 @@ fn test_summary_only_flag() {
         .success()
         .stdout(predicate::str::contains("Total Files:"))
         .stdout(predicate::str::contains("Size Distribution:"));
-    
+
     // Should not contain individual file listings
     let output = cmd.output().unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
