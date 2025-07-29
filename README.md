@@ -153,7 +153,6 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 - 📖 **Documentation**: [docs/](docs/)
 - 🐛 **Issues**: [GitHub Issues](https://github.com/gajeshbhat/rfstat/issues)
 - 💬 **Discussions**: [GitHub Discussions](https://github.com/gajeshbhat/rfstat/discussions)
-- 🔧 **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 🙏 Acknowledgments
 
@@ -165,6 +164,4 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ---
 
----
-
-**Made with ❤️ and ☕ by the rfstat team**
+**Made with ❤️ and ☕ by [Gajesh Bhat](https://www.gajeshbhat.com/)
