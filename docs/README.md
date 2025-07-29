@@ -34,9 +34,6 @@ Practical guides that solve real-world problems you might encounter.
 Complete reference documentation for looking up specific information.
 
 - **[CLI Reference](reference/cli.md)** - Complete command-line interface documentation
-- **[API Reference](reference/api.md)** - Library API documentation
-- **[Output Formats](reference/output-formats.md)** - Detailed format specifications
-- **[Configuration](reference/configuration.md)** - Configuration options and environment variables
 
 **When to use:** You need to look up specific syntax, options, or behavior.
 
@@ -46,9 +43,6 @@ Complete reference documentation for looking up specific information.
 Background information and conceptual explanations to deepen your understanding.
 
 - **[Architecture](explanation/architecture.md)** - System design and implementation details
-- **[Design Decisions](explanation/design-decisions.md)** - Why rfstat works the way it does
-- **[Performance](explanation/performance.md)** - Performance characteristics and optimization
-- **[Security](explanation/security.md)** - Security considerations and best practices
 
 **When to use:** You want to understand the reasoning behind rfstat's design and behavior.
 

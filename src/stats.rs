@@ -57,10 +57,7 @@ pub fn calculate_stats(entries: &[FileEntry]) -> FileStats {
 
             // Update file type statistics
             let file_type = entry.file_type.as_deref().unwrap_or("no_extension");
-            let type_stats = stats
-                .file_types
-                .entry(file_type.to_string())
-                .or_default();
+            let type_stats = stats.file_types.entry(file_type.to_string()).or_default();
             type_stats.count += 1;
             type_stats.total_size += entry.size;
         }

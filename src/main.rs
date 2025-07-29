@@ -162,8 +162,6 @@ fn should_use_colors(cli: &Cli) -> bool {
     }
 }
 
-
-
 #[cfg(test)]
 mod tests {
     use super::*;

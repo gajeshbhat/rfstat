@@ -48,23 +48,7 @@ How-to guides are practical instructions for solving specific real-world problem
 
 ### Development Workflows
 
-#### [Project Analysis](project-analysis.md)
-**Problem:** Need to analyze code project structure and build artifacts  
-**Solution:** Development-focused analysis patterns
 
-- Analyze build artifacts and dependencies
-- Track project growth over time
-- Identify cleanup opportunities
-- Generate project reports
-
-#### [Performance Monitoring](performance-monitoring.md)
-**Problem:** Need to monitor application storage patterns  
-**Solution:** Application-specific monitoring approaches
-
-- Monitor application data growth
-- Track temporary file usage
-- Analyze cache effectiveness
-- Performance optimization
 
 ## 🎯 How to Use These Guides
 
@@ -160,9 +144,7 @@ rm -f /tmp/analysis.json
 
 **Integrating with automation?** → [Automation Integration](automation.md)
 
-**Working with code projects?** → [Project Analysis](project-analysis.md)
 
-**Monitoring performance?** → [Performance Monitoring](performance-monitoring.md)
 
 ## 🤝 Contributing New Guides
 
