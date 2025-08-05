@@ -23,7 +23,7 @@ anyhow = "1.0"
 thiserror = "2.0"
 walkdir = "2.4"
 humansize = "2.1"
-tabled = "0.15"
+tabled = "0.20"
 colored = "3.0"
 chrono = { version = "0.4", features = ["serde"] }
 log = "0.4"
