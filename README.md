@@ -161,7 +161,3 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 - Uses [walkdir](https://github.com/BurntSushi/walkdir) for efficient directory traversal
 - Uses [tabled](https://github.com/zhiburt/tabled) for beautiful table formatting
 - Inspired by traditional Unix tools like `du`, `find`, and `ls`
-
----
-
-**Made with ❤️ and ☕ by [Gajesh Bhat](https://www.gajeshbhat.com/)

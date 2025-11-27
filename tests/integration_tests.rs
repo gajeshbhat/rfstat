@@ -3,7 +3,7 @@
 //! These tests verify the complete functionality of rfstat by running
 //! the actual binary and testing various command-line scenarios.
 
-use assert_cmd::Command;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use std::fs::{self, File};
 use std::io::Write;
@@ -40,7 +40,7 @@ fn create_test_directory() -> TempDir {
 fn test_basic_directory_analysis() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--quiet")
         .assert()
@@ -54,7 +54,7 @@ fn test_basic_directory_analysis() {
 fn test_json_output_format() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--format")
         .arg("json")
@@ -70,7 +70,7 @@ fn test_json_output_format() {
 fn test_csv_output_format() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--format")
         .arg("csv")
@@ -86,7 +86,7 @@ fn test_csv_output_format() {
 fn test_summary_output_format() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--format")
         .arg("summary")
@@ -102,7 +102,7 @@ fn test_summary_output_format() {
 fn test_extension_filtering() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--extensions")
         .arg("txt,log")
@@ -120,7 +120,7 @@ fn test_extension_filtering() {
 fn test_size_filtering() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--min-size")
         .arg("1KB")
@@ -137,7 +137,7 @@ fn test_size_filtering() {
 fn test_sorting_by_size() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--sort")
         .arg("size")
@@ -164,7 +164,7 @@ fn test_hidden_files_inclusion() {
     let temp_dir = create_test_directory();
 
     // Test without --all flag (should not include hidden files)
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--format")
         .arg("csv")
@@ -174,7 +174,7 @@ fn test_hidden_files_inclusion() {
         .stdout(predicate::str::contains(".hidden").not());
 
     // Test with --all flag (should include hidden files)
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--all")
         .arg("--format")
@@ -190,7 +190,7 @@ fn test_recursive_vs_non_recursive() {
     let temp_dir = create_test_directory();
 
     // Test recursive (default)
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--format")
         .arg("csv")
@@ -200,7 +200,7 @@ fn test_recursive_vs_non_recursive() {
         .stdout(predicate::str::contains("nested.conf"));
 
     // Test non-recursive
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--no-recursive")
         .arg("--format")
@@ -215,7 +215,7 @@ fn test_recursive_vs_non_recursive() {
 fn test_depth_limiting() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--depth")
         .arg("1")
@@ -231,7 +231,7 @@ fn test_depth_limiting() {
 fn test_limit_option() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--limit")
         .arg("2")
@@ -251,7 +251,7 @@ fn test_limit_option() {
 
 #[test]
 fn test_nonexistent_path() {
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg("/nonexistent/path")
         .assert()
         .failure()
@@ -262,7 +262,7 @@ fn test_nonexistent_path() {
 fn test_invalid_size_format() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--min-size")
         .arg("invalid_size")
@@ -273,7 +273,7 @@ fn test_invalid_size_format() {
 
 #[test]
 fn test_help_output() {
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg("--help")
         .assert()
         .success()
@@ -284,7 +284,7 @@ fn test_help_output() {
 
 #[test]
 fn test_version_output() {
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg("--version")
         .assert()
         .success()
@@ -295,7 +295,7 @@ fn test_version_output() {
 fn test_verbose_logging() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--verbose")
         .arg("--format")
@@ -311,7 +311,7 @@ fn test_verbose_logging() {
 fn test_permissions_and_times() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--show-permissions")
         .arg("--show-times")
@@ -328,7 +328,7 @@ fn test_permissions_and_times() {
 fn test_summary_only_flag() {
     let temp_dir = create_test_directory();
 
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg(temp_dir.path())
         .arg("--summary-only")
         .arg("--quiet")
@@ -346,7 +346,7 @@ fn test_summary_only_flag() {
 #[test]
 fn test_current_directory_default() {
     // Test that rfstat works when no path is provided (uses current directory)
-    let mut cmd = Command::cargo_bin("rfstat").unwrap();
+    let mut cmd = cargo_bin_cmd!("rfstat");
     cmd.arg("--format")
         .arg("summary")
         .arg("--quiet")
