@@ -264,7 +264,7 @@ fn write_file_types_table<W: Write>(
     writeln!(writer, "{}", "-".repeat(20))?;
 
     let mut type_data: Vec<_> = stats.file_types.iter().collect();
-    type_data.sort_by(|a, b| b.1.count.cmp(&a.1.count));
+    type_data.sort_by_key(|b| std::cmp::Reverse(b.1.count));
 
     let type_rows: Vec<FileTypeRow> = type_data
         .into_iter()
