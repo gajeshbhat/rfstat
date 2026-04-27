@@ -226,10 +226,10 @@ pub fn sort_entries(entries: &mut [FileEntry], sort_by: crate::types::SortBy) {
             entries.sort_by(|a, b| a.path.cmp(&b.path));
         }
         SortBy::Size => {
-            entries.sort_by(|a, b| b.size.cmp(&a.size)); // Largest first
+            entries.sort_by_key(|b| std::cmp::Reverse(b.size)); // Largest first
         }
         SortBy::Modified => {
-            entries.sort_by(|a, b| b.modified.cmp(&a.modified)); // Newest first
+            entries.sort_by_key(|b| std::cmp::Reverse(b.modified)); // Newest first
         }
         SortBy::Type => {
             entries.sort_by(|a, b| match (&a.file_type, &b.file_type) {

@@ -64,8 +64,8 @@ pub fn calculate_stats(entries: &[FileEntry]) -> FileStats {
     }
 
     // Calculate derived statistics
-    if stats.total_files > 0 {
-        stats.avg_file_size = stats.total_size / stats.total_files;
+    if let Some(avg) = stats.total_size.checked_div(stats.total_files) {
+        stats.avg_file_size = avg;
 
         if !file_sizes.is_empty() {
             stats.max_file_size = *file_sizes.iter().max().unwrap();
@@ -75,8 +75,8 @@ pub fn calculate_stats(entries: &[FileEntry]) -> FileStats {
 
     // Calculate average sizes for each file type
     for type_stats in stats.file_types.values_mut() {
-        if type_stats.count > 0 {
-            type_stats.avg_size = type_stats.total_size / type_stats.count;
+        if let Some(avg) = type_stats.total_size.checked_div(type_stats.count) {
+            type_stats.avg_size = avg;
         }
     }
 
@@ -98,7 +98,7 @@ pub fn calculate_stats(entries: &[FileEntry]) -> FileStats {
 /// A vector of the N largest files, sorted by size (largest first)
 pub fn get_largest_files(entries: &[FileEntry], n: usize) -> Vec<&FileEntry> {
     let mut files: Vec<&FileEntry> = entries.iter().filter(|e| !e.is_dir).collect();
-    files.sort_by(|a, b| b.size.cmp(&a.size));
+    files.sort_by_key(|b| std::cmp::Reverse(b.size));
     files.into_iter().take(n).collect()
 }
 
@@ -114,7 +114,7 @@ pub fn get_largest_files(entries: &[FileEntry], n: usize) -> Vec<&FileEntry> {
 /// A vector of tuples containing (file_type, TypeStats) sorted by count
 pub fn get_top_file_types(stats: &FileStats, n: usize) -> Vec<(&String, &TypeStats)> {
     let mut types: Vec<(&String, &TypeStats)> = stats.file_types.iter().collect();
-    types.sort_by(|a, b| b.1.count.cmp(&a.1.count));
+    types.sort_by_key(|b| std::cmp::Reverse(b.1.count));
     types.into_iter().take(n).collect()
 }
 
